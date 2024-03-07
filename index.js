@@ -55,14 +55,15 @@ function createRoom() {
 }
 
 //adiciona um jogador na sala
-function joinRoom(roomId, player) {
+function joinRoom(roomId, playerId, socketId) {
   if (!rooms[roomId]) {
     throw new Error(`No such room ${roomId}`);
   } else {
     //estrutura inicial do jogador
     rooms[roomId].players.push({
-      id: player.id,
-      name: 'Player' + player.id,
+      socketId: socketId,
+      id: playerId,
+      name: 'Player' + playerId,
       score: 0,
       paddle: 210,
       ai: false
@@ -73,9 +74,10 @@ function joinRoom(roomId, player) {
 };
 
 //remover jogador de uma sala
-function leftRoom(roomId, playerId) {
-  let indexToRemove = rooms[roomId].players.findIndex((p) => p.id === playerId);
-
+function leftRoom(roomId, socketId) {
+  let indexToRemove = rooms[roomId].players.findIndex((p) => p.socketId === socketId);
+  console.log("mmm")
+  console.log(rooms[roomId])
   if (indexToRemove !== -1) {
     rooms[roomId].playersCount--;
     return rooms[roomId].players.splice(indexToRemove, 1)[0];
@@ -92,6 +94,17 @@ function getRoomList(socket) {
   return roomList;
 };
 
+function findRoomBySocketId(socketId) {
+  for (let roomId in rooms) {
+    var players = rooms[roomId].players;
+    for (const player of players) {
+      if (player.socketId == socketId) {
+        return roomId;
+      }
+    }
+  }
+  return null;
+};
 function findRoomByPlayerId(playerId) {
   for (let roomId in rooms) {
     var players = rooms[roomId].players;
@@ -204,7 +217,6 @@ function updatePaddle(playerId, action) {
 
 function gameLoop(roomId) {
   if (rooms[roomId].gameStatus == "started") {
-    console.log(".")
     updateBall(roomId);
     io.to(roomId).emit('gameState', rooms[roomId]);
     setTimeout(() => gameLoop(roomId), 1000 / 60);
@@ -216,15 +228,28 @@ function gameLoop(roomId) {
 };
 
 io.on('connection', (socket) => {
+
+  function verifyPlayers(roomId, playersCount) {
+    if (playersCount < 2) {
+      io.to(roomId).emit('waitPlayer', { playersCount });
+      gameOver(roomId);
+    } else {
+      io.to(roomId).emit('readyPlayer', { playersCount });
+    }
+  }
+
+  function updateRoomList(){
+    io.emit('updateRoomList', getRoomList());
+  }
   console.log(`New client connected: ${socket.id}`);
 
   socket.emit('updateRoomList', getRoomList());
 
-  socket.on('createRoom', () => {
+  socket.on('createRoom', (player, callback) => {
     const roomId = createRoom();
-    joinRoom(roomId, socket.id);
-    socket.join(roomId);
-    io.emit('updateRoomList', getRoomList());
+
+    updateRoomList();
+    callback(roomId);
   });
 
   socket.on('joinRoom', (room) => {
@@ -236,17 +261,28 @@ io.on('connection', (socket) => {
     if (rooms[roomId].playersCount >= 2) {
       io.to(roomId).emit('errorRoom', { msg: 'Sala esta cheia' })
     } else {
-      console.log(joinRoom(roomId, socket));
-      socket.join(roomId);
-      console.log(`Client ${socket.id} join in room ${roomId}`)
-      io.emit('updateRoomList', getRoomList());
+
+
     }
   });
 
+  socket.on('playerJoin', (data) => {
+    let roomId = data.roomId;
+    let playerId = data.playerId;
+
+    joinRoom(roomId, playerId, socket.id);
+
+    let playersCount = rooms[roomId].playersCount
+
+    socket.join(roomId);
+    console.log(`Client ${socket.id}, id ${playerId} join in room ${roomId}`)
+
+    verifyPlayers(roomId, playersCount);
+    updateRoomList();
+  })
+
   socket.on('playerAction', (action) => {
     const roomId = findRoomByPlayerId(action.playerId);
-    console.log(rooms[roomId].gameStatus)
-    console.log(roomId)
 
     if (rooms[roomId].gameStatus == "started") {
       updatePaddle(action.playerId, action.action);
@@ -264,10 +300,19 @@ io.on('connection', (socket) => {
   });
 
   socket.on('disconnect', () => {
-    let roomId = findRoomByPlayerId(socket.id);
-    console.log(roomId)
+    let roomId = findRoomBySocketId(socket.id);
+
     if (roomId) {
+      
+
       leftRoom(roomId, socket.id);
+      socket.leave(roomId)
+
+      let playersCount = rooms[roomId].playersCount
+
+      verifyPlayers(roomId, playersCount);
+      updateRoomList();
+      
     }
     console.log('Client disconnected');
   });
@@ -276,5 +321,5 @@ io.on('connection', (socket) => {
 
 server.listen(PORT, () => {
   console.log(`Server is running on port ${PORT}`);
-  console.log(createRoom())
+  //console.log(createRoom())
 });

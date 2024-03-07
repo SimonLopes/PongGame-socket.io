@@ -4,6 +4,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <script src="https://code.jquery.com/jquery-3.7.1.slim.min.js"
+        integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
+
     <title>Pong Game Multiplayer</title>
     <style>
         body {
@@ -12,11 +16,7 @@
             color: white;
 
         }
-        canvas {
-            background-color: black;
-            border: 4px solid blue;
-            border-radius: 10px;
-        }
+
         .container {
             width: 100%;
             height: auto;
@@ -27,31 +27,50 @@
 
 <body>
     <div class="container">
-        <h1>Pong Game Multiplayer - Player</h1>
-        <canvas id="gameCanvas" width="1000" height="500"></canvas>
+
         <div class="rooms">
-            <div id="roomList"></div>
+            <h1>Pong Game Multiplayer - Rooms</h1>
+            <div id="roomList">
+
+            </div>
             <button onclick="createRoom()">Criar uma nova sala</button>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    
+    <script src="client.js"></script>
+
     <script>
-        const socket = io();
-        const canvas = document.getElementById('gameCanvas');
-        const context = canvas.getContext('2d');
 
-        // Function to get or generate client ID
-        function getClientId() {
-            let clientId = localStorage.getItem('clientId');
-            if (!clientId) {
-                clientId = socket.id
-                localStorage.setItem('clientId', clientId);
-            }
-            return clientId;
-        }
         let roomList = [];
+
+
+        function generateClientId() {
+            return Math.random().toString(36).substr(2, 15);
+        }
+
+        function setClientId() {
+            let playerId = generateClientId()
+            localStorage.setItem('playerId', playerId);
+            return playerId;
+        }
+        function setRoomId(roomId) {
+            localStorage.setItem('roomId', roomId);
+            return roomId;
+        }
+
+        function redirectToRoom(roomId, playerId) {
+            let params = {
+                'roomId': roomId,
+                'playerId': playerId
+            }
+           
+            let queryString = Object.keys(params).map(key => key + '=' + encodeURIComponent(params[key])).join('&');
+            let urlWithParams = `/room/game.html?${queryString}`;
+            console.log(urlWithParams);
+
+            window.location.href = urlWithParams;
+        }
 
         socket.on('updateRoomList', (rooms) => {
             roomList = rooms;
@@ -65,202 +84,32 @@
             console.log(rooms)
             rooms.forEach(room => {
                 console.log(room)
-                roomListElement.innerHTML += `<button onclick="joinRoom('${room.id}')">${room.id} - ${room.playersCount}/2</button></br>`;
+                roomListElement.innerHTML += `<button class="room" onclick="joinRoom('${room.id}')">${room.id} - ${room.playersCount}/2</button></br>`;
             });
         }
 
         function joinRoom(roomId) {
+            console.log(".")
             if (roomId) {
-                socket.emit('joinRoom', { roomId });
+                let playerId = setClientId();
+                setRoomId(roomId);
+                console.log(roomId)
+
+                socket.emit('joinRoom', { roomId, playerId });
+
+                redirectToRoom(roomId, playerId)
             } else {
                 alert('Sala não encontrada. Por favor, verifique o ID da sala.');
             }
         }
 
         function createRoom() {
-            socket.emit('createRoom');
-        }
-        socket.on('gameState', (state) => {
-            if(state.gameStatus == "started"){
-                draw(state);
-            }else if (state.gameStatus == "over"){
-                drawOverGame(state);
-            }
-        });
-
-        function drawOverGame(state) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            context.fillStyle = 'red';
-            context.font = '30px Arial';
-            context.textAlign = 'center';
-            context.fillText("Game Over!", canvas.width / 2, canvas.height / 2 - 40);
-
-            context.fillStyle = 'red';
-            context.font = '30px Arial';
-            context.textAlign = 'center';
-            context.fillText(state.players[0].score + " - " + state.players[1].score, canvas.width / 2, canvas.height / 2);
-
-            context.fillStyle = 'red';
-            context.font = '18px Arial';
-            context.textAlign = 'center';
-            context.fillText(`Velocidade: ${1 + state.players[0].score + state.players[1].score}`, canvas.width / 2, canvas.height / 2 + 40);
-            context.closePath();
-        }
-
-        function draw(state) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            context.beginPath();
-            context.moveTo(canvas.width / 2, 0);
-            context.lineTo(canvas.width / 2, canvas.height);
-            context.strokeStyle = 'white';
-            context.stroke();
-            context.closePath();
-
-            context.fillStyle = 'white';
-            context.font = '18px Arial';
-            context.textAlign = 'center';
-            context.fillText(state.players[0].score + " - " + state.players[1].score, canvas.width / 2, 20);
-
-            context.fillStyle = 'white';
-            context.font = '18px Arial';
-            context.textAlign = 'center';
-            context.fillText(`Velocidade: ${1 + state.players[0].score + state.players[1].score}`, canvas.width / 2, canvas.height - 20);
-
-            context.beginPath();
-            context.arc(state.ball.x, state.ball.y, 10, 0, Math.PI * 2);
-            context.fillStyle = 'blue';
-            context.fill();
-            context.closePath();
-
-            context.fillStyle = 'yellow';
-            context.fillRect(35, state.players[0].paddle, 5, 80);
-
-            context.fillStyle = 'green';
-            context.fillRect(965, state.players[1].paddle, 5, 80);
-        }
-
-        function sendPlayerAction(action) {
-            socket.emit('playerAction', action);
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'w') {
-                sendPlayerAction({ playerId: socket.id, action: 'up' });
-            } else if (event.key === 's') {
-                sendPlayerAction({ playerId: socket.id, action: 'down' });
-            }
-        });
-        /*
-        const socket = io();
-        const canvas = document.getElementById('gameCanvas');
-        const context = canvas.getContext('2d');
-
-        let roomList = [];
-
-        socket.on('updateRoomList', (rooms) => {
-            roomList = rooms;
-            
-            displayRoomList(rooms);
-        });
-
-        function displayRoomList(rooms) {
-            const roomListElement = document.getElementById('roomList');
-            roomListElement.innerHTML = '<h2>Lista de Salas</h2>';
-            console.log(rooms)
-            rooms.forEach(room => {
-                console.log(room)
-                roomListElement.innerHTML += `<button onclick="joinRoom('${room.id}')">${room.id} - ${room.playersCount}/2</button>`;
+            let playerId  = setClientId();
+            socket.emit('createRoom', {playerId}, (roomId) => {
+                joinRoom(roomId)
             });
         }
 
-        function joinRoom(roomId) {
-            console.log(roomId)
-            if (roomId) {
-                socket.emit('joinRoom', {roomId});
-
-            } else {
-                alert('Sala não encontrada. Por favor, verifique o ID da sala.');
-            }
-        }
-
-        function createRoom() {
-            socket.emit('createRoom');
-        }
-
-        socket.on('gameState', (state) => {
-            draw(state);
-        });
-
-        socket.on('over', (state) => {
-            drawOverGame(state);
-        });
-
-        function drawOverGame(state) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            context.fillStyle = 'red';
-            context.font = '30px Arial';
-            context.textAlign = 'center';
-            context.fillText("Game Over!", canvas.width / 2, canvas.height / 2 - 40);
-
-            context.fillStyle = 'red';
-            context.font = '30px Arial';
-            context.textAlign = 'center';
-            context.fillText(state.scoreP1 + " - " + state.scoreP2, canvas.width / 2, canvas.height / 2);
-
-            context.fillStyle = 'red';
-            context.font = '18px Arial';
-            context.textAlign = 'center';
-            context.fillText(`Velocidade: ${1 + state.scoreP1 + state.scoreP2}`, canvas.width / 2, canvas.height / 2 + 40);
-            context.closePath();
-        }
-
-        function draw(state) {
-            context.clearRect(0, 0, canvas.width, canvas.height);
-
-            context.beginPath();
-            context.moveTo(canvas.width / 2, 0);
-            context.lineTo(canvas.width / 2, canvas.height);
-            context.strokeStyle = 'white';
-            context.stroke();
-            context.closePath();
-
-            context.fillStyle = 'white';
-            context.font = '18px Arial';
-            context.textAlign = 'center';
-            context.fillText(state.scoreP1 + " - " + state.scoreP2, canvas.width / 2, 20);
-
-            context.fillStyle = 'white';
-            context.font = '18px Arial';
-            context.textAlign = 'center';
-            context.fillText(`Velocidade: ${1 + state.scoreP1 + state.scoreP2}`, canvas.width / 2, canvas.height - 20);
-
-            context.beginPath();
-            context.arc(state.ball.x, state.ball.y, 10, 0, Math.PI * 2);
-            context.fillStyle = 'blue';
-            context.fill();
-            context.closePath();
-
-            context.fillStyle = 'yellow';
-            context.fillRect(35, state.players.player1.paddle, 5, 80);
-
-            context.fillStyle = 'green';
-            context.fillRect(965, state.players.player2.paddle, 5, 80);
-        }
-
-        function sendPlayerAction(action) {
-            socket.emit('playerAction', action);
-        }
-
-        document.addEventListener('keydown', (event) => {
-            if (event.key === 'w') {
-                sendPlayerAction({ playerId: socket.id, action: 'up' });
-            } else if (event.key === 's') {
-                sendPlayerAction({ playerId: socket.id, action: 'down' });
-            }
-        });*/
     </script>
 </body>
 

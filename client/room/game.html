@@ -6,31 +6,38 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pong Game Multiplayer</title>
     <style>
+        body {
+            background-color: rgb(42, 50, 58);
+            font-family: 'Courier New', Courier, monospace;
+            color: white;
+
+        }
         canvas {
             background-color: black;
             border: 4px solid blue;
             border-radius: 10px;
         }
-
         .container {
-            display: flex;
-            justify-content: space-between;
+            width: 100%;
+            height: auto;
+            text-align: center;
         }
-
     </style>
 </head>
 
 <body>
     <div class="container">
+        <h1>Pong Game Multiplayer - Player</h1>
         <canvas id="gameCanvas" width="1000" height="500"></canvas>
+        <button onclick="leftGame()">Sair</button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="../client.js"></script>
     <script src="draw.js"></script>
+    
     <script>
-        
-        
+       
         
     </script>
 </body>
