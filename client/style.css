@@ -1,0 +1,13 @@
+/* style.css */
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+}
+
+canvas {
+    display: block;
+    margin: 0 auto;
+    background-color: #f0f0f0;
+    border: 1px solid #ccc;
+}
