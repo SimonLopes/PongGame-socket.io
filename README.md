@@ -8,7 +8,7 @@ Este jogo implementa o clássico PONG em uma versão multiplayer, onde dois joga
 
 ## Demonstração
 
-<img src="/assets//demo/20240307_011928-3.gif"  alt="Demonstração do Jogo"  width="80%" height="auto"/>
+<img src="/assets//demo/20240307_011928-5.gif"  alt="Demonstração do Jogo"  width="80%" height="auto"/>
 
 ## Funcionalidades
 
