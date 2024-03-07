@@ -119,7 +119,7 @@ function draw(state) {
 
     context.beginPath();
     context.arc(state.ball.x, state.ball.y, 10, 0, Math.PI * 2);
-    context.fillStyle = 'blue';
+    context.fillStyle = 'white';
     context.fill();
     context.closePath();
 

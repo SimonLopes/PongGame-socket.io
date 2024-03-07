@@ -283,6 +283,9 @@ io.on('connection', (socket) => {
 
   socket.on('playerAction', (action) => {
     const roomId = findRoomByPlayerId(action.playerId);
+    let playersCount = rooms[roomId].playersCount
+
+    if (playersCount < 2) return;
 
     if (rooms[roomId].gameStatus == "started") {
       updatePaddle(action.playerId, action.action);

@@ -1,13 +1,77 @@
-/* style.css */
-body, html {
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #202127;
     margin: 0;
     padding: 0;
-    height: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
 }
 
-canvas {
+.container {
+    background-color: #2d2e3d;
+    border-radius: 10px;
+    box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+    padding: 30px;
+    max-width: 500px;
+    width: 100%;
+}
+
+h1 {
+    margin-top: 0;
+    color: #fff;
+}
+
+.rooms {
+    margin-bottom: 20px;
+}
+
+.room-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.room-list li {
+    margin-bottom: 10px;
+    flex-direction: row;
     display: block;
-    margin: 0 auto;
+    padding: 10px;
     background-color: #f0f0f0;
-    border: 1px solid #ccc;
+    border-radius: 5px;
+    text-decoration: none;
+    color: #333;
+    transition: background-color 0.3s ease;
+    font-weight: bolder;
+}
+
+.room-link {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.room-id {
+    margin-right: 10px; /* Espaçamento entre o ID da sala e a quantidade de jogadores */
+}
+
+.room-list li:hover {
+    background-color: #e0e0e0;
+}
+
+.create-room-btn {
+    background-color: #4caf50;
+    color: #fff;
+    border: none;
+    border-radius: 5px;
+    padding: 10px 20px;
+    cursor: pointer;
+    font-size: 16px;
+    transition: background-color 0.3s ease;
+    width: 100%;
+}
+
+.create-room-btn:hover {
+    background-color: #45a049;
 }

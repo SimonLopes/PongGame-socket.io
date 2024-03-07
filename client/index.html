@@ -9,20 +9,9 @@
         integrity="sha256-kmHvs0B+OpCW5GVHUNjv9rOmY0IvSIRcf7zGUDTDQM8=" crossorigin="anonymous"></script>
 
     <title>Pong Game Multiplayer</title>
-    <style>
-        body {
-            background-color: rgb(42, 50, 58);
-            font-family: 'Courier New', Courier, monospace;
-            color: white;
-
-        }
-
-        .container {
-            width: 100%;
-            height: auto;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
@@ -30,10 +19,10 @@
 
         <div class="rooms">
             <h1>Pong Game Multiplayer - Rooms</h1>
-            <div id="roomList">
-
-            </div>
-            <button onclick="createRoom()">Criar uma nova sala</button>
+            <ul class="room-list" id="roomList">
+                <!-- Rooms will be dynamically added here -->
+            </ul>
+            <button class="create-room-btn" onclick="createRoom()">Create a New Room</button>
         </div>
     </div>
 
@@ -64,7 +53,7 @@
                 'roomId': roomId,
                 'playerId': playerId
             }
-           
+
             let queryString = Object.keys(params).map(key => key + '=' + encodeURIComponent(params[key])).join('&');
             let urlWithParams = `/room/game.html?${queryString}`;
             console.log(urlWithParams);
@@ -80,11 +69,28 @@
 
         function displayRoomList(rooms) {
             const roomListElement = document.getElementById('roomList');
-            roomListElement.innerHTML = '<h2>Lista de Salas</h2>';
-            console.log(rooms)
+            roomListElement.innerHTML = '';
             rooms.forEach(room => {
-                console.log(room)
-                roomListElement.innerHTML += `<button class="room" onclick="joinRoom('${room.id}')">${room.id} - ${room.playersCount}/2</button></br>`;
+                let listItem = document.createElement('li');
+                let roomLink = document.createElement('a');
+                roomLink.classList.add('room-link');
+
+                // Criando elementos span para o ID da sala e a quantidade de jogadores
+                let roomIdSpan = document.createElement('span');
+                roomIdSpan.textContent = `${room.id}`;
+                roomIdSpan.classList.add('room-id');
+                roomLink.appendChild(roomIdSpan);
+
+                let playersCountSpan = document.createElement('span');
+                playersCountSpan.textContent = `${room.playersCount}/2`;
+                playersCountSpan.classList.add('players-count');
+                roomLink.appendChild(playersCountSpan);
+
+                // Adicionando evento de clique ao link
+                roomLink.onclick = () => joinRoom(room.id);
+
+                listItem.appendChild(roomLink);
+                roomListElement.appendChild(listItem);
             });
         }
 
@@ -104,8 +110,8 @@
         }
 
         function createRoom() {
-            let playerId  = setClientId();
-            socket.emit('createRoom', {playerId}, (roomId) => {
+            let playerId = setClientId();
+            socket.emit('createRoom', { playerId }, (roomId) => {
                 joinRoom(roomId)
             });
         }

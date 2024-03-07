@@ -5,31 +5,16 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pong Game Multiplayer</title>
-    <style>
-        body {
-            background-color: rgb(42, 50, 58);
-            font-family: 'Courier New', Courier, monospace;
-            color: white;
-
-        }
-        canvas {
-            background-color: black;
-            border: 4px solid blue;
-            border-radius: 10px;
-        }
-        .container {
-            width: 100%;
-            height: auto;
-            text-align: center;
-        }
-    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <link rel="stylesheet" href="style.css">
 </head>
 
 <body>
     <div class="container">
         <h1>Pong Game Multiplayer - Player</h1>
         <canvas id="gameCanvas" width="1000" height="500"></canvas>
-        <button onclick="leftGame()">Sair</button>
+        <button class="exit-btn" onclick="leftGame()">Sair</button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
