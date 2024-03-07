@@ -35,7 +35,7 @@ Node.js: Ambiente de execução do código JavaScript no lado do servidor.
 ## Atualizações
 - [x] Versão 1.0 - Implementação básica do jogo com funcionalidades de criar e unir salas.
 - [x] Versão 1.1 - Estilização, correção de bugs e adição de mensagens de erro.
-- [ ] Versão 1.2 - Implementação de velocidade relativa dos raquetas com a barra de score.
+- [x] Versão 1.2 - Implementação de velocidade relativa dos raquetas com a barra de score.
 - [ ] Versão 2.0 - Implementação de AI para o oponente humano, tornando o jogo mais desafiador.
 - [ ] Versão x.x - XXXXXXX
 

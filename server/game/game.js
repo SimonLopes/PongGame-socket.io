@@ -74,13 +74,16 @@ function updateBall(roomId) {
 }
 
 function updatePaddle(playerId, action) {
+    
     let roomId = findRoomByPlayerId(playerId);
     let playerIndex = getPlayerIndexById(playerId, roomId);
+    let room = rooms[roomId];
+    let { velocity } = room;
 
     if (action === 'up' && rooms[roomId].players[playerIndex].paddle > 0) {
-        rooms[roomId].players[playerIndex].paddle -= 25;
+        rooms[roomId].players[playerIndex].paddle -= (25 + velocity / 2);
     } else if (action === 'down' && rooms[roomId].players[playerIndex].paddle + 80 < 500) {
-        rooms[roomId].players[playerIndex].paddle += 25;
+        rooms[roomId].players[playerIndex].paddle += (25 + velocity / 2);
     }
 
 }
