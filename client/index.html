@@ -16,7 +16,13 @@
 
 <body>
     <div class="container">
-
+        <div id="myModal" class="modal">
+            <div class="modal-content">
+                <span class="close" onclick="closeModal()">&times;</span>
+                <h1 class="modal-title" id="modal-title"></h1>
+                <p class="modal-msg" id="modal-msg"></p>
+            </div>
+        </div>
         <div class="rooms">
             <h1>Pong Game Multiplayer - Rooms</h1>
             <ul class="room-list" id="roomList">
@@ -28,95 +34,7 @@
 
     <script src="/socket.io/socket.io.js"></script>
     <script src="client.js"></script>
-
-    <script>
-
-        let roomList = [];
-
-
-        function generateClientId() {
-            return Math.random().toString(36).substr(2, 15);
-        }
-
-        function setClientId() {
-            let playerId = generateClientId()
-            localStorage.setItem('playerId', playerId);
-            return playerId;
-        }
-        function setRoomId(roomId) {
-            localStorage.setItem('roomId', roomId);
-            return roomId;
-        }
-
-        function redirectToRoom(roomId, playerId) {
-            let params = {
-                'roomId': roomId,
-                'playerId': playerId
-            }
-
-            let queryString = Object.keys(params).map(key => key + '=' + encodeURIComponent(params[key])).join('&');
-            let urlWithParams = `/room/game.html?${queryString}`;
-            console.log(urlWithParams);
-
-            window.location.href = urlWithParams;
-        }
-
-        socket.on('updateRoomList', (rooms) => {
-            roomList = rooms;
-
-            displayRoomList(rooms);
-        });
-
-        function displayRoomList(rooms) {
-            const roomListElement = document.getElementById('roomList');
-            roomListElement.innerHTML = '';
-            rooms.forEach(room => {
-                let listItem = document.createElement('li');
-                let roomLink = document.createElement('a');
-                roomLink.classList.add('room-link');
-
-                // Criando elementos span para o ID da sala e a quantidade de jogadores
-                let roomIdSpan = document.createElement('span');
-                roomIdSpan.textContent = `${room.id}`;
-                roomIdSpan.classList.add('room-id');
-                roomLink.appendChild(roomIdSpan);
-
-                let playersCountSpan = document.createElement('span');
-                playersCountSpan.textContent = `${room.playersCount}/2`;
-                playersCountSpan.classList.add('players-count');
-                roomLink.appendChild(playersCountSpan);
-
-                // Adicionando evento de clique ao link
-                roomLink.onclick = () => joinRoom(room.id);
-
-                listItem.appendChild(roomLink);
-                roomListElement.appendChild(listItem);
-            });
-        }
-
-        function joinRoom(roomId) {
-            console.log(".")
-            if (roomId) {
-                let playerId = setClientId();
-                setRoomId(roomId);
-                console.log(roomId)
-
-                socket.emit('joinRoom', { roomId, playerId });
-
-                redirectToRoom(roomId, playerId)
-            } else {
-                alert('Sala não encontrada. Por favor, verifique o ID da sala.');
-            }
-        }
-
-        function createRoom() {
-            let playerId = setClientId();
-            socket.emit('createRoom', { playerId }, (roomId) => {
-                joinRoom(roomId)
-            });
-        }
-
-    </script>
+    <script src="index.js"></script>
 </body>
 
 </html>

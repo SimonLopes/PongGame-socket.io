@@ -43,7 +43,12 @@ function leftRoom(roomId, socketId) {
     let indexToRemove = rooms[roomId].players.findIndex((p) => p.socketId === socketId);
     if (indexToRemove !== -1) {
         rooms[roomId].playersCount--;
-        return rooms[roomId].players.splice(indexToRemove, 1)[0];
+        rooms[roomId].players.splice(indexToRemove, 1)[0];
+        if(rooms[roomId].playersCount  == 0){
+            delete rooms[roomId];
+        } else {
+            return rooms[roomId];
+        }
     } else {
         console.log('Error in leaving the room');
     }

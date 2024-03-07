@@ -2,6 +2,10 @@ const canvas = document.getElementById('gameCanvas');
 const context = canvas.getContext('2d');
 
 
+function leftGame(){
+    window.location.href='../index.html';
+}
+
 function getClientId() {
     let playerId = localStorage.getItem('playerId');
     if (!playerId) {

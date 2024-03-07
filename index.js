@@ -28,16 +28,16 @@ io.on('connection', (socket) => {
     callback(roomId);
   });
 
-  socket.on('joinRoom', (room) => {
+  socket.on('joinRoom', (room, callback) => {
     let roomId = room.roomId
     let playerId = room.playerId
     if (!rooms[roomId] && !playerId) {
       throw new Error(`No such room ${roomId}`);
     }
     if (rooms[roomId].playersCount >= 2) {
-      io.to(roomId).emit('errorRoom', { msg: 'Sala esta cheia' })
+      callback({ status: 'error', title: 'Sala cheia', msg: 'Sala selecionada esta cheia!', roomId, playerId })
     } else {
-
+      callback({ status: 'connected', title: 'Conectado', msg: 'Conectado a sala selecionada!', roomId, playerId })
     }
   });
 
@@ -78,9 +78,12 @@ io.on('connection', (socket) => {
       leftRoom(roomId, socket.id);
       socket.leave(roomId)
 
-      let playersCount = rooms[roomId].playersCount
+      if (rooms[roomId]) {
+        let playersCount = rooms[roomId].playersCount
 
-      verifyPlayers(roomId, playersCount, io);
+        verifyPlayers(roomId, playersCount, io);
+      }
+
       updateRoomList(io);
 
     }
