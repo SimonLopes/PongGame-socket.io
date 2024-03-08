@@ -1,3 +1,5 @@
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -11,7 +13,7 @@
     <title>Pong Game Multiplayer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -26,15 +28,13 @@
         <div class="rooms">
             <h1>Pong Game Multiplayer - Rooms</h1>
             <ul class="room-list" id="roomList">
-                <!-- Rooms will be dynamically added here -->
             </ul>
-            <button class="create-room-btn" onclick="createRoom()">Create a New Room</button>
+            <button class="create-room-btn" onclick="gameApp.createRoom()">Create a New Room</button>
         </div>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="client.js"></script>
-    <script src="index.js"></script>
+    <script src="GameApp.js"></script>
 </body>
 
 </html>

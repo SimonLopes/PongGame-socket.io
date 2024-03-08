@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -7,7 +8,7 @@
     <title>Pong Game Multiplayer</title>
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/8.0.1/normalize.min.css">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
-    <link rel="stylesheet" href="style.css">
+    <link rel="stylesheet" href="styles.css">
 </head>
 
 <body>
@@ -16,17 +17,10 @@
         <div class="canvas-wrapper">
             <canvas id="gameCanvas" width="1000" height="500"></canvas>
         </div>
-        <button class="exit-btn" onclick="leftGame()">Sair</button>
+        <button class="exit-btn" onclick="leftGame()">Left</button>
     </div>
 
     <script src="/socket.io/socket.io.js"></script>
-    <script src="../client.js"></script>
-    <script src="draw.js"></script>
-    
-    <script>
-       
-        
-    </script>
+    <script src="../GameClient.js"></script>
 </body>
-
 </html>
