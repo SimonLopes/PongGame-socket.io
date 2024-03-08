@@ -21,6 +21,10 @@ class GameClient {
         });
     }
 
+    leaveRoom(){
+        window.location.href='../index.html';
+    }
+
     init() {
         this.socket.on('waitPlayer', (playersCount) => this.drawWait(playersCount.playersCount));
         this.socket.on('readyPlayer', () => this.drawReady());
@@ -136,4 +140,4 @@ class GameClient {
     }
 }
 
-new GameClient();
+let gameClient = new GameClient();
