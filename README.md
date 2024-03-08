@@ -20,23 +20,24 @@ Este jogo implementa o clássico PONG em uma versão multiplayer, onde dois joga
 
 ## Instalação e Execução
 
-Clone este repositório em seu ambiente local.
-Instale as dependências utilizando npm install.
-Inicie o servidor utilizando node express.
-Acesse o jogo através de um navegador web, acessando o endereço local.
+* Clone este repositório em seu ambiente local.
+* Instale as dependências utilizando npm install.
+* Inicie o servidor utilizando node express.
+* Acesse o jogo através de um navegador web, acessando o endereço local.
 
 ## Tecnologias Utilizadas
 
-Express.js: Utilizado para a criação do servidor web.
-Socket.IO: Biblioteca para comunicação em tempo real entre servidor e cliente.
-HTML/CSS/JavaScript: Utilizados para a estrutura, estilo e interatividade do jogo.
-Node.js: Ambiente de execução do código JavaScript no lado do servidor.
+* Express.js: Utilizado para a criação do servidor web.
+* Socket.IO: Biblioteca para comunicação em tempo real entre servidor e cliente.
+* HTML/CSS/JavaScript: Utilizados para a estrutura, estilo e interatividade do jogo.
+* Node.js: Ambiente de execução do código JavaScript no lado do servidor.
 
 ## Atualizações
 - [x] Versão 1.0 - Implementação básica do jogo com funcionalidades de criar e unir salas.
 - [x] Versão 1.1 - Estilização, correção de bugs e adição de mensagens de erro.
 - [x] Versão 1.2 - Implementação de velocidade relativa dos raquetas com a barra de score.
-- [ ] Versão 2.0 - Implementação de AI para o oponente humano, tornando o jogo mais desafiador.
+- [x] Versão 2.0 - Padronizado projeto com orientação objeto.
+- [ ] Versão 3.0 - Implementação de AI para o oponente humano, tornando o jogo mais desafiador.
 - [ ] Versão x.x - XXXXXXX
 
 ## Autor
